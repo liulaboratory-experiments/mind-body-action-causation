@@ -30,9 +30,12 @@ This is the repository structure and breakdown:
 ## Code
 This folder contains the R analysis scripts for study 1 and study 2. Each study folder contains an `.Rmd` analysis file with a knitted `.html` report, a data folder (`/data/`), a figure folder with figures used in the manuscript (`/figures/`), and a couple of intermediate files created by the analysis scripts (i.e. `snapshots_study1_pre-processing_analysis` and `snapshots_study1_final_analysis`. 
 
+If you would like to quickly view the analysis report, just download the .html report for the corresponding study, and double-click to open it on your browser (i.e. go to `/code/study1/` and download `/study1_analysis.html`). 
+
 ## Docs
 This folder contains the experimental stimuli. Both experiments was implemented using jsPsych, and are available at the html files `study1.html`, `study2_inference.html` and `study2_intervention.html`. The `/images`, `video`, and `/jspsych` folders contain supporting materials for the experiments. 
 
+Thank you for accessing these materials!
 
 
 
