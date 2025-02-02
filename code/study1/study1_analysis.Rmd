@@ -32,6 +32,7 @@ pacman::p_load(tidyverse,
                effects,
                Hmisc,
                performance,
+               rmarkdown,
                purrr,
                readr,
                scales,
@@ -44,7 +45,7 @@ sessionInfo()
 
 ```
 
-## Read data and set variables
+## Set variables
 
 ```{r}
 desired_order <- c("see something", "hear something", "choose what to do", 
@@ -71,8 +72,14 @@ correlations_output_path <- paste0(snapshots_output_path, "/correlations.csv")
 rdms_input_path <- paste0(base_path, "/figures/theoretical-rdms")
 rdms_outputs_path <- paste0(base_path, "/figures")
 
-# read data
+
+```
+
+## Read data
+
+```{r}
 d <- read_csv(data_combined_path)
+
 
 ```
 
@@ -166,6 +173,9 @@ df_combined <- df_freesort %>%
   left_join(df_causal, by = c("subject_id", "itemA", "itemB")) %>% 
   relocate(freesort_distance, .before = "causal_distance") %>% 
   relocate(trial_type_order, .after = "domain_itemB")
+
+
+paged_table(df_combined)
 
 write.csv(df_combined, paste0(snapshots_output_path, "/study1_processed.csv"), row.names = F)
 ```
@@ -282,7 +292,7 @@ label_colors <- item_colors[rownames(df_mean_freesort_matrix)]
 
 custom_palette <- colorRampPalette(c("red", "white", "blue")) 
 
-pdf(file = paste0(rdms_outputs_path, "/freesort/averageEuclideanRDM.pdf"), width = 12, height = 12)
+# pdf(file = paste0(rdms_outputs_path, "/freesort/averageEuclideanRDM.pdf"), width = 12, height = 12)
 
 #large image
 corrplot(
@@ -305,18 +315,18 @@ corrplot(
 )
 
 # legend for the domains
-legend(
-  "topleft",
-  inset = c(0.1, 0.1), #move the legend outside the plot
-  legend = c("Mind", "Action", "Body"), 
-  fill = group_colors, 
-  border = NA, 
-  bty = "n", #no box around the legend
-  cex = 2, #text size
-  xpd = TRUE, #allow drawing outside the plot area
-  #ncol = 1,
-  y.intersp = 1.4 #increase this for more space between rows
-)
+# legend(
+#   "topleft",
+#   inset = c(0.1, 0.1), #move the legend outside the plot
+#   legend = c("Mind", "Action", "Body"), 
+#   fill = group_colors, 
+#   border = NA, 
+#   bty = "n", #no box around the legend
+#   cex = 2, #text size
+#   xpd = TRUE, #allow drawing outside the plot area
+#   #ncol = 1,
+#   y.intersp = 1.4 #increase this for more space between rows
+# )
 
 ```
 
@@ -399,7 +409,7 @@ label_colors <- item_colors[rownames(df_mean_causal_rdm)]
 
 custom_palette <- colorRampPalette(c("red", "white", "blue")) 
 
-pdf(file = paste0(rdms_outputs_path, "/causal/averageCausalRDM.pdf"), width = 12, height = 12)
+# pdf(file = paste0(rdms_outputs_path, "/causal/averageCausalRDM.pdf"), width = 12, height = 12)
 
 #large image
 corrplot(
@@ -421,12 +431,12 @@ corrplot(
 )
 
 legend(
-  "topleft", 
-  inset = c(0.1, 0.1), 
+  "topleft",
+  inset = c(0.1, 0.1),
   legend = c("Mind", "Action", "Body"),
-  fill = group_colors, 
-  border = NA, 
-  bty = "n", 
+  fill = group_colors,
+  border = NA,
+  bty = "n",
   cex = 2, #text size
   xpd = TRUE, #draw outside the plot area
   #ncol = 1,
@@ -441,119 +451,44 @@ legend(
 ## Specific causal relations for paper 
 
 ```{r}
-#mind->action
-df_filtered <- df_causal %>% 
-  filter(domain_itemA == "mind" & domain_itemB == "action")
-mean_distance <- mean(df_filtered$causal_distance, na.rm = TRUE)
-sem <- sd(df_filtered$causal_distance, na.rm = TRUE) / sqrt(nrow(df_filtered))
-ci_lower <- mean_distance - qt(0.975, df = nrow(df_filtered) - 1) * sem
-ci_upper <- mean_distance + qt(0.975, df = nrow(df_filtered) - 1) * sem
-mean_distance
-ci_lower
-ci_upper
+compute_ci <- function(df, condition_label) {
+  mean_distance <- mean(df$causal_distance, na.rm = TRUE)
+  sem <- sd(df$causal_distance, na.rm = TRUE) / sqrt(nrow(df))
+  ci_lower <- mean_distance - qt(0.975, df = nrow(df) - 1) * sem
+  ci_upper <- mean_distance + qt(0.975, df = nrow(df) - 1) * sem
 
-#action->mind
-df_filtered <- df_causal %>% 
-  filter(domain_itemA == "action" & domain_itemB == "mind")
-mean_distance <- mean(df_filtered$causal_distance, na.rm = TRUE)
-sem <- sd(df_filtered$causal_distance, na.rm = TRUE) / sqrt(nrow(df_filtered))
-ci_lower <- mean_distance - qt(0.975, df = nrow(df_filtered) - 1) * sem
-ci_upper <- mean_distance + qt(0.975, df = nrow(df_filtered) - 1) * sem
-mean_distance
-ci_lower
-ci_upper
+  cat(sprintf("%s: mean distance = %.3f [95%% CI: %.3f, %.3f]\n", 
+              condition_label, mean_distance, ci_lower, ci_upper))
+}
 
-#action->action
-df_filtered <- df_causal %>% 
-  filter(domain_itemA == "action" & domain_itemB == "action")
-mean_distance <- mean(df_filtered$causal_distance, na.rm = TRUE)
-sem <- sd(df_filtered$causal_distance, na.rm = TRUE) / sqrt(nrow(df_filtered))
-ci_lower <- mean_distance - qt(0.975, df = nrow(df_filtered) - 1) * sem
-ci_upper <- mean_distance + qt(0.975, df = nrow(df_filtered) - 1) * sem
-mean_distance
-ci_lower
-ci_upper
 
-#body->body
-df_filtered <- df_causal %>% 
-  filter(domain_itemA == "bio" & domain_itemB == "bio")
-mean_distance <- mean(df_filtered$causal_distance, na.rm = TRUE)
-sem <- sd(df_filtered$causal_distance, na.rm = TRUE) / sqrt(nrow(df_filtered))
-ci_lower <- mean_distance - qt(0.975, df = nrow(df_filtered) - 1) * sem
-ci_upper <- mean_distance + qt(0.975, df = nrow(df_filtered) - 1) * sem
-mean_distance
-ci_lower
-ci_upper
+#defining and computing each condition
+compute_ci(df_causal %>% filter(domain_itemA == "mind", domain_itemB == "action"), "mind → action")
+compute_ci(df_causal %>% filter(domain_itemA == "action", domain_itemB == "mind"), "action → mind")
+compute_ci(df_causal %>% filter(domain_itemA == "action", domain_itemB == "action"), "action → action")
+compute_ci(df_causal %>% filter(domain_itemA == "bio", domain_itemB == "bio"), "body → body")
+compute_ci(df_causal %>% filter(domain_itemA == "bio", domain_itemB == "action"), "body → action")
+compute_ci(df_causal %>% filter(domain_itemA == "action", domain_itemB == "bio"), "action → body")
 
-#body->actions
-df_filtered <- df_causal %>% 
-  filter(domain_itemA == "bio" & domain_itemB == "action")
-mean_distance <- mean(df_filtered$causal_distance, na.rm = TRUE)
-sem <- sd(df_filtered$causal_distance, na.rm = TRUE) / sqrt(nrow(df_filtered))
-ci_lower <- mean_distance - qt(0.975, df = nrow(df_filtered) - 1) * sem
-ci_upper <- mean_distance + qt(0.975, df = nrow(df_filtered) - 1) * sem
-mean_distance
-ci_lower
-ci_upper
+#Perception → Cognition
+compute_ci(df_causal %>% 
+             filter(domain_itemA == "mind", domain_itemB == "mind", 
+                    itemA %in% c("hear something", "see something"),
+                    itemB %in% c("choose what to do", "think about something", "remember something")),
+           "perception → cognition")
 
-#actions->body
-df_filtered <- df_causal %>% 
-  filter(domain_itemA == "action" & domain_itemB == "bio")
-mean_distance <- mean(df_filtered$causal_distance, na.rm = TRUE)
-sem <- sd(df_filtered$causal_distance, na.rm = TRUE) / sqrt(nrow(df_filtered))
-ci_lower <- mean_distance - qt(0.975, df = nrow(df_filtered) - 1) * sem
-ci_upper <- mean_distance + qt(0.975, df = nrow(df_filtered) - 1) * sem
-mean_distance
-ci_lower
-ci_upper
+#Cognition → Perception
+compute_ci(df_causal %>% 
+             filter(domain_itemA == "mind", domain_itemB == "mind", 
+                    itemB %in% c("hear something", "see something"),
+                    itemA %in% c("choose what to do", "think about something", "remember something")),
+           "cognition → perception")
 
-#perception->cognition
-df_filtered <- df_causal %>% 
-  filter(domain_itemA == "mind" & domain_itemB == "mind") %>% 
-  filter(itemA %in% c("hear something", "see something") &
-         itemB %in% c("choose what to do", "think about something", "remember something"))
-mean_distance <- mean(df_filtered$causal_distance, na.rm = TRUE)
-sem <- sd(df_filtered$causal_distance, na.rm = TRUE) / sqrt(nrow(df_filtered))
-ci_lower <- mean_distance - qt(0.975, df = nrow(df_filtered) - 1) * sem
-ci_upper <- mean_distance + qt(0.975, df = nrow(df_filtered) - 1) * sem
-mean_distance
-ci_lower
-ci_upper
+#Seeing → Sick
+compute_ci(df_causal %>% filter(itemA == "see something", itemB == "get sick"), "seeing → sick")
 
-#cognition->perception
-df_filtered <- df_causal %>% 
-  filter(domain_itemA == "mind" & domain_itemB == "mind") %>% 
-  filter(itemB %in% c("hear something", "see something") &
-         itemA %in% c("choose what to do", "think about something", "remember something"))
-mean_distance <- mean(df_filtered$causal_distance, na.rm = TRUE)
-sem <- sd(df_filtered$causal_distance, na.rm = TRUE) / sqrt(nrow(df_filtered))
-ci_lower <- mean_distance - qt(0.975, df = nrow(df_filtered) - 1) * sem
-ci_upper <- mean_distance + qt(0.975, df = nrow(df_filtered) - 1) * sem
-mean_distance
-ci_lower
-ci_upper
-
-#seeing->sick
-df_filtered <- df_causal %>% 
-  filter(itemA == "see something" & itemB == "get sick")
-mean_distance <- mean(df_filtered$causal_distance, na.rm = TRUE)
-sem <- sd(df_filtered$causal_distance, na.rm = TRUE) / sqrt(nrow(df_filtered))
-ci_lower <- mean_distance - qt(0.975, df = nrow(df_filtered) - 1) * sem
-ci_upper <- mean_distance + qt(0.975, df = nrow(df_filtered) - 1) * sem
-mean_distance
-ci_lower
-ci_upper
-
-#hear->sick
-df_filtered <- df_causal %>% 
-  filter(itemA == "hear something" & itemB == "get sick")
-mean_distance <- mean(df_filtered$causal_distance, na.rm = TRUE)
-sem <- sd(df_filtered$causal_distance, na.rm = TRUE) / sqrt(nrow(df_filtered))
-ci_lower <- mean_distance - qt(0.975, df = nrow(df_filtered) - 1) * sem
-ci_upper <- mean_distance + qt(0.975, df = nrow(df_filtered) - 1) * sem
-mean_distance
-ci_lower
-ci_upper
+#Hearing → Sick
+compute_ci(df_causal %>% filter(itemA == "hear something", itemB == "get sick"), "hearing → sick")
 
 ```
 
@@ -904,8 +839,8 @@ bar_plot <- ggplot(d_combined_correlations,
   
   geom_hline(yintercept = noise_ceiling_sorting$upper_bound, color = "darkgray", linetype = "dashed", linewidth = 0.5) +
   geom_hline(yintercept = noise_ceiling_sorting$lower_bound, color = "darkgray", linetype = "dashed", linewidth = 0.5) +
-  geom_hline(yintercept = noise_ceiling_causal$upper_bound, color = "black", linetype = "dashed", linewidth = 0.5) +
-  geom_hline(yintercept = noise_ceiling_causal$lower_bound, color = "black", linetype = "dashed", linewidth = 0.5) +
+  geom_hline(yintercept = noise_ceiling_causal$upper_tri_upper_bound, color = "black", linetype = "dashed", linewidth = 0.5) +
+  geom_hline(yintercept = noise_ceiling_causal$upper_tri_lower_bound, color = "black", linetype = "dashed", linewidth = 0.5) +
   theme_bw() +
   theme(
     axis.text.x = element_blank(),
@@ -937,6 +872,8 @@ rdm_row <- rdm_3_category + rdm_6_category + rdm_2_category + rdm_cosine +
 
 plot_correlations <- bar_plot / rdm_row + 
   plot_layout(heights = c(5, 2)) #adjusts height ratio
+
+plot_correlations
 
 ggsave(
   filename = "figures/rdm_correlation_plot.pdf",
@@ -1093,12 +1030,12 @@ freesort_rdm_correlation <- cor(flatten_rdm(as.matrix(df_freesort_rdm_causation_
                                 flatten_rdm(as.matrix(df_freesort_rdm_freesort_first)),
                                 method = "pearson")
 
-print(causation_rdm_correlation)
-print(freesort_rdm_correlation)
+print(paste0("Corr(causal rdm Causal Task first, causal rdm Sorting Task first): " , causation_rdm_correlation))
+print(paste0("Corr(freesort rdm Causal Task first, freesort rdm Sorting Task first):  " , freesort_rdm_correlation))
 
 #compute correlation difference
 correlation_difference <- causation_rdm_correlation - freesort_rdm_correlation
-
+print(paste0("correlation difference: ", correlation_difference))
 ```
 
 ## causal-freesort vs causal freesort correlation
@@ -1114,11 +1051,16 @@ freesort_first_rdm_correlation <- cor(flatten_rdm(as.matrix(df_causal_rdm_freeso
                                 method = "pearson")
 
 print(causation_first_rdm_correlation)
-print(freesort_first_rdm_correlation)
+print(paste0("Corr(causal rdm Causal Task first, freesort rdm Causal Task first): " , causation_first_rdm_correlation))
+
+print(paste0("Corr(causal rdm Sorting Task first, freesort rdm Sorting Task first):  " , freesort_first_rdm_correlation))
+
 
 #compute correlation difference
 correlation_difference_orders <- freesort_first_rdm_correlation - causation_first_rdm_correlation 
 correlation_difference_orders
+
+print(paste0("Correlation difference: " , correlation_difference_orders))
 
 fisher_z <- function(r) {
   return(0.5 * log((1 + r) / (1 - r)))

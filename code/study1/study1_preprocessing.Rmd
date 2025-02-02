@@ -1,9 +1,15 @@
 ---
 title: "study1 preprocessing"
-output: html_document
+output: 
+  html_document:
+      toc: true
+      toc_float: true
+      toc_depth: 3
+      number_sections: true
 date: "2024-12-10"
 author: Joseph Outa
 ---
+
 
 This script does the following:
 1. Takes original data
