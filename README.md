@@ -1,6 +1,6 @@
-# README
+# Adults hold a causal explanatory framework that connects understanding other people’s minds, actions and bodies
 
-This repository contains data and scripts for the project "Adults hold a causal explanatory framework that connects understanding other people’s minds, actions and bodies" by Joseph Outa and Shari Liu. 
+This repository contains data and scripts for the project "Adults hold a causal explanatory framework that connects understanding other people’s minds, actions and bodies" by Joseph Outa and Shari Liu. If you have any questions about this repository, please contact the first author Joseph Outa at jouta1 \[at] jhu \[dot] edu.
 
 This is the repository structure and breakdown: 
 
@@ -35,5 +35,4 @@ This folder contains the experimental stimuli. Both experiments was implemented 
 
 
 
-If you have any questions about this repository, please contact the first author Joseph Outa at jouta1 \[at] jhu \[dot] edu.
 
