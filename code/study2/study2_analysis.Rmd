@@ -7,7 +7,7 @@ output:
       toc_depth: 3
       number_sections: true
 date: "2025-1-10"
-authors: Joseph Outa, Shari Liu
+author: anonymous
 ---
 
 This is the analysis script for study 2 of the project "Adults hold a causal explanatory framework that connects understanding of other people’s minds, actions and bodies" by Joseph Outa and Shari Liu  
