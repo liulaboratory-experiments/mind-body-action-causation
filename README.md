@@ -1,4 +1,4 @@
-# Adults hold a causal explanatory framework that connects understanding other people’s minds, actions and bodies
+# Adults hold a causal explanatory framework that connects understanding of other people’s minds, actions and bodies
 
 Heads-up: This repository has been anonymized for peer review.
 
