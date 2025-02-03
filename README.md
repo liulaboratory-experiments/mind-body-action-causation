@@ -10,15 +10,16 @@ This is the repository structure and breakdown:
 .
 ├── code
 │   ├── study1
+│   │   ├── codebooks
 │   │   ├── data
 │   │   ├── embeddings
+│   │   ├── figure
 │   │   ├── figures
 │   │   ├── snapshots_study1_final_analysis
 │   │   └── snapshots_study1_preprocessing_analysis
 │   └── study2
 │       ├── data
-│       ├── figures
-│       └── snapshots_study2_analysis
+│       └── figures
 └── docs
     ├── images
     │   └── items-circles
@@ -27,17 +28,32 @@ This is the repository structure and breakdown:
     │   ├── examples
     │   └── plugin-survey-slider
     └── video
-```
 
-## Code
+
+```
+## Folder contents
+
+### Code
 This folder contains the R analysis scripts for study 1 and study 2. Each study folder contains an `.Rmd` analysis file with a knitted `.html` report, a data subfolder (`/data/`), a figures subfolder with figures used in the manuscript (`/figures/`), and some subfolders containing intermediate files created by the analysis scripts (i.e. `snapshots_study1_preprocessing_analysis` and `snapshots_study1_final_analysis`. 
 
-Feel free to download the repository (button on top right) and look through the files. If you would like to quickly view the analysis report, you can download just the .html report for the corresponding study, and double-click to open it on your browser (i.e. go to `/code/study1/` and download `/study1_analysis.html`). 
+Feel free to download the repository (button on top right) and look through the files. If you would like to quickly view the analysis reports, you can download just the .html report for the corresponding study, and double-click to open it on your browser (i.e. go to `/code/study1/` and download `/study1_analysis.html`). 
 
-## Docs
+### Docs
 This folder contains the experimental stimuli. Both experiments was implemented using jsPsych, and are available at the html files `docs/study1.html`, `docs/study2_inference.html` and `docs/study2_intervention.html`. The `/images`, `video`, and `/jspsych` folders contain supporting materials for the experiments. 
 
+
+## Bonus: The analysis pipeline
+
+The following is a flowchart depicting the analysis pipeline to help orient you to the analysis materials. 
+
+![pipeline_guide](https://github.com/user-attachments/assets/9b5ee686-98c6-498a-ab1f-ef4730f9041c)
+
+The flowchart above describes all the csv files (those used as script inputs, and those used as intermediate outputs between scripts - all highlighted in red) and the relevant scripts and their locations. Across the two studies, there are 3 analysis scripts, and 5 relevant datasets. There is a codebook for all 5 data sets in the /codebook/ folder. These codebooks consist of knitted `.html` reports generated using the `codebook` package from Arslan (2019), and contain description of the header columns of each dataset. They can all be directly downloaded and double-clicked to be viewed.
+
 Thank you for accessing these materials!
+
+
+
 
 
 
