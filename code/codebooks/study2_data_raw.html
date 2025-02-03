@@ -2816,6 +2816,20 @@ sessionInfo()</code></pre>
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre><code>## # A tibble: 100 × 2
+##    subject_id     n
+##    &lt;fct&gt;      &lt;int&gt;
+##  1 subj_1        21
+##  2 subj_10       21
+##  3 subj_100      21
+##  4 subj_11       21
+##  5 subj_12       21
+##  6 subj_13       21
+##  7 subj_14       21
+##  8 subj_15       21
+##  9 subj_16       21
+## 10 subj_17       21
+## # ℹ 90 more rows</code></pre>
 <pre class="r"><code>codebook::codebook(d)</code></pre>
 <div id="metadata" class="section level3" number="1.0.1">
 <h3><span class="header-section-number">1.0.1</span> Metadata</h3>
@@ -2823,9 +2837,12 @@ sessionInfo()</code></pre>
 <h4><span class="header-section-number">1.0.1.1</span> Description</h4>
 <p><strong>Dataset name</strong>: Raw data for Study 2</p>
 <p>This is the raw dataset for study 1 that will be used as input for
-the study 2 script. It contains information like the target items which
-subjects saw, the causal and similar choice items and their repsonses in
-these trials.</p>
+the study 2 script. There are 2100 rows, corresponding to 100 subjects,
+with 21 rows per subject. The 21 rows refer to the 21 jspsych trials,
+which include both experimental trials (15) and additional trials for
+instructions, debriefing and so on. The columns contains information
+like the target items which subjects saw, the causal and similar choice
+items and their repsonses in these trials.</p>
 <details>
 <summary title="Expand this section to see some additional metadata in a structured format that is useful for search engines">
 Metadata for search engines
@@ -4774,7 +4791,7 @@ question</td>
 <script type="application/ld+json">
 {
   "name": "Raw data for Study 2",
-  "description": "This is the raw dataset for study 1 that will be used as input for the study 2 script. It contains information like the target items which subjects saw, the causal and similar choice items and their repsonses in these trials.\n\n\n## Table of variables\nThis table contains variable names, labels, and number of missing values.\nSee the complete codebook for more.\n\n[truncated]\n\n### Note\nThis dataset was automatically described using the [codebook R package](https://rubenarslan.github.io/codebook/) (version 0.9.6).",
+  "description": "This is the raw dataset for study 1 that will be used as input for the study 2 script. There are 2100 rows, corresponding to 100 subjects, with 21 rows per subject. The 21 rows refer to the 21 jspsych trials, which include both experimental trials (15) and additional trials for instructions, debriefing and so on. The columns contains information like the target items which subjects saw, the causal and similar choice items and their repsonses in these trials. \n\n\n## Table of variables\nThis table contains variable names, labels, and number of missing values.\nSee the complete codebook for more.\n\n[truncated]\n\n### Note\nThis dataset was automatically described using the [codebook R package](https://rubenarslan.github.io/codebook/) (version 0.9.6).",
   "datePublished": "2025-02-03",
   "keywords": ["subject_id", "trial_type", "trial_index", "plugin_version", "time_elapsed", "trial_id", "rt", "stimulus", "response", "view_history", "condition", "itemB", "causal_itemA", "similarity_itemA", "selected_choice", "correct_response_attn", "feedback", "age", "ethnicity", "gender", "race"],
   "@context": "https://schema.org/",
@@ -4893,7 +4910,7 @@ JSON-LD metadata
 this codebook publicly on the web.</p>
 <pre class="json"><code>{
   &quot;name&quot;: &quot;Raw data for Study 2&quot;,
-  &quot;description&quot;: &quot;This is the raw dataset for study 1 that will be used as input for the study 2 script. It contains information like the target items which subjects saw, the causal and similar choice items and their repsonses in these trials.\n\n\n## Table of variables\nThis table contains variable names, labels, and number of missing values.\nSee the complete codebook for more.\n\n[truncated]\n\n### Note\nThis dataset was automatically described using the [codebook R package](https://rubenarslan.github.io/codebook/) (version 0.9.6).&quot;,
+  &quot;description&quot;: &quot;This is the raw dataset for study 1 that will be used as input for the study 2 script. There are 2100 rows, corresponding to 100 subjects, with 21 rows per subject. The 21 rows refer to the 21 jspsych trials, which include both experimental trials (15) and additional trials for instructions, debriefing and so on. The columns contains information like the target items which subjects saw, the causal and similar choice items and their repsonses in these trials. \n\n\n## Table of variables\nThis table contains variable names, labels, and number of missing values.\nSee the complete codebook for more.\n\n[truncated]\n\n### Note\nThis dataset was automatically described using the [codebook R package](https://rubenarslan.github.io/codebook/) (version 0.9.6).&quot;,
   &quot;datePublished&quot;: &quot;2025-02-03&quot;,
   &quot;keywords&quot;: [&quot;subject_id&quot;, &quot;trial_type&quot;, &quot;trial_index&quot;, &quot;plugin_version&quot;, &quot;time_elapsed&quot;, &quot;trial_id&quot;, &quot;rt&quot;, &quot;stimulus&quot;, &quot;response&quot;, &quot;view_history&quot;, &quot;condition&quot;, &quot;itemB&quot;, &quot;causal_itemA&quot;, &quot;similarity_itemA&quot;, &quot;selected_choice&quot;, &quot;correct_response_attn&quot;, &quot;feedback&quot;, &quot;age&quot;, &quot;ethnicity&quot;, &quot;gender&quot;, &quot;race&quot;],
   &quot;@context&quot;: &quot;https://schema.org/&quot;,

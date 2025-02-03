@@ -74,7 +74,7 @@ var_label(d) <- list(
 )
 
 metadata(d)$name <- "Raw data for Study 1"
-metadata(d)$description <- "This is the raw dataset for study 1 that will be used as input for the pre-processing script. Since this data is not yet preprocessed, and many of the variables are directly created by jspsych, the variables may not be immediately interpretable or relevant."
+metadata(d)$description <- "This is the raw dataset for study 1 that will be used as input for the pre-processing script. Since this data is not yet preprocessed, and many of the variables are directly created by jspsych, the variables may not be immediately interpretable or relevant. There are 50 subject rows, and 24 rows per subject. Each row represents a jspsych trial."
 
 ```
 

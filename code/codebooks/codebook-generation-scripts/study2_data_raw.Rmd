@@ -37,6 +37,8 @@ d <- read_csv(data_path) %>%
   select(-c(success, timeout, failed_images, failed_video, failed_audio)) %>% 
   mutate(subject_id = as.factor(subject_id))
 
+d %>% 
+  count(subject_id)
 ```
 
 ```{r, echo = FALSE}
@@ -61,7 +63,7 @@ var_label(d) <- list(
 )
 
 metadata(d)$name <- "Raw data for Study 2"
-metadata(d)$description <- "This is the raw dataset for study 1 that will be used as input for the study 2 script. It contains information like the target items which subjects saw, the causal and similar choice items and their repsonses in these trials."
+metadata(d)$description <- "This is the raw dataset for study 1 that will be used as input for the study 2 script. There are 2100 rows, corresponding to 100 subjects, with 21 rows per subject. The 21 rows refer to the 21 jspsych trials, which include both experimental trials (15) and additional trials for instructions, debriefing and so on. The columns contains information like the target items which subjects saw, the causal and similar choice items and their repsonses in these trials. "
 
 ```
 
