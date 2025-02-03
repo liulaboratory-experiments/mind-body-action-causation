@@ -41,6 +41,8 @@ Feel free to download the repository (button on top right) and look through the 
 ### Docs
 This folder contains the experimental stimuli. Both experiments was implemented using jsPsych, and are available at the html files `docs/study1.html`, `docs/study2_inference.html` and `docs/study2_intervention.html`. The `/images`, `video`, and `/jspsych` folders contain supporting materials for the experiments. 
 
+## Supplementary Information
+In the home directory is a pdf document containing Supplementary Information for the cogsci paper. 
 
 ## Bonus: The analysis pipeline
 
