@@ -10,11 +10,13 @@ date: "2025-1-10"
 author: anonymous
 ---
 
-This is the analysis script for study 2 of the project "Adults hold a causal explanatory framework that connects understanding of other people’s minds, actions and bodies" by Joseph Outa and Shari Liu  
+This is the analysis script for study 2 of the project "Adults hold a causal explanatory framework that connects understanding of other people’s minds, actions and bodies" by (authors redacted).
 
 Study 2 had N = 100, with random assignment to two conditions: Intervention and Trait Inference, with 15 trials per condition.
 
 The question: are subjects in the Intervention condition more likely to select the causal item, and subjects in the Inference condition more likely to select the similar item.
+
+This script takes as input `study2_data_raw.csv` and `data_freesort_minus_causals.csv`, and plots Supplementary Table 1 in the SI materials, Figure 2 from the main manuscript, and runs statistical models to predict variability in responses from causal and freesort distances.
 
 # Setup
 
@@ -41,17 +43,18 @@ sessionInfo()
 ## Set variables
 
 ```{r, warnings = FALSE}
-base_path <- here("code")
-data_path <- paste0(base_path, "/study2/data/study2_data_raw.csv")
-snapshots_input_path <- paste0(base_path, "/study1/snapshots_study1_final_analysis")
-snapshots_output_path <- paste0(base_path, "/study2/snapshots_study2_analysis")
-freesort_and_causal_distances_df_path <- paste0(snapshots_input_path, "/relative_distances.csv")
-
-
+# variables
 desired_order <- c("see something", "hear something", "choose what to do", 
                    "remember something", "think about something", "reach for something", 
                    "sit down", "jump up and down", "kick something", "take a walk", 
                    "get tired", "become hungry", "feel scared", "experience pain", "get sick")
+
+# paths
+## script inputs
+base_path <- here("code")
+data_path <- paste0(base_path, "/study2/data/study2_data_raw.csv")
+snapshots_input_path <- paste0(base_path, "/study1/snapshots_study1_final_analysis")
+freesort_and_causal_distances_df_path <- paste0(snapshots_input_path, "/freesort_minus_causals.csv")
 
 ```
 
@@ -641,6 +644,9 @@ base_plot <- ggplot(combined_effects, aes(x = PredictorValue, y = fit, color = P
     #plot.margin = margin(20, 20, 50, 20)
   )
 base_plot
+
+```
+```{r}
 
 ```
 

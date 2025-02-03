@@ -9,7 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Joseph Outa" />
+<meta name="author" content="anonymous" />
 
 <meta name="date" content="2024-12-10" />
 
@@ -1480,21 +1480,29 @@ border-radius: 0px;
 
 
 <h1 class="title toc-ignore">study1 preprocessing</h1>
-<h4 class="author">Joseph Outa</h4>
+<h4 class="author">anonymous</h4>
 <h4 class="date">2024-12-10</h4>
 
 </div>
 
 
-<p>This script does the following: 1. Takes original data 2. Separates
-out freesort data and saves the csv (data_freesort) 3. Separates out
-combined (i.e. freesort + causation) data and saves the csv
-(data_pilot_12_14_combined) 4. Generates theoretical RDM data and saves
-the csv (d_theories_categories) 5. Adds USE embeddings and saves the csv
-(d_all_theories) 6. Plots RDMs and saves them into /figures/</p>
-<p>Study description - Study ran on 12/13/24 on Connect CloudResearch,
-50 participants - Subject selection criteria: 95% approval rate, minimum
-10 previous submissions, and fluent in English</p>
+<p>This script does the following:<br />
+1. Takes raw data <code>study1_data_raw.csv</code>. The codebook for the
+raw data is available at
+<code>data/study1_data_raw_codebook</code>.<br />
+2. Parses it into a combined (i.e. freesort + causation) data frame and
+saves into csv <code>data_processed_step1.csv</code>. The codebook for
+this data frame is available at
+<code>/snapshots_study1_preprocessing_analysis/data_processed_step1_codebook</code>.<br />
+3. Generates model predictions (aka theoretical RDM data) and saves into
+csv <code>data_model_predictions.csv</code>.<br />
+4. Plots RDMs and saves them into
+<code>figures/theoretical-rdms</code>.</p>
+<p>Study description:<br />
+- Study 1 was ran on 12/13/24 on Connect CloudResearch, N = 50
+participants.<br />
+- Subject selection criteria: 95% approval rate, minimum 10 previous
+submissions, and fluent in English.</p>
 <pre class="r"><code>knitr::opts_chunk$set(echo = TRUE)
 library(pacman)
 pacman::p_load(tidyverse, here, corrplot, jsonlite)
@@ -1562,14 +1570,12 @@ desired_order &lt;- c(&quot;see something&quot;, &quot;hear something&quot;, &qu
                    &quot;sit down&quot;, &quot;jump up and down&quot;, &quot;kick something&quot;, &quot;take a walk&quot;, 
                    &quot;get tired&quot;, &quot;become hungry&quot;, &quot;feel scared&quot;, &quot;experience pain&quot;, &quot;get sick&quot;)
 
-#paths
+#paths: data outputs
 rdm_figures_outputs_path &lt;- paste0(base_path, &quot;/figures/theoretical-rdms/&quot;)
-combined_output_csv &lt;- &quot;pilot_121424_combined&quot;
+combined_output_csv &lt;- &quot;data_processed_step1&quot;
 snapshots_path &lt;- paste0(base_path, &quot;/snapshots_study1_preprocessing_analysis&quot;)
-freesort_output_path &lt;- paste0(snapshots_path, &quot;/pilot_121424_freeesort.csv&quot;) #data for Sorting Task
 combined_output_path &lt;- paste0(snapshots_path, &quot;/&quot;, combined_output_csv, &quot;.csv&quot;) 
-theories_output_path &lt;- paste0(snapshots_path, &quot;/pilot_121424_theories.csv&quot;)  
-theories_all_output_path &lt;- paste0(snapshots_path, &quot;/pilot_121424_theories_all.csv&quot;) </code></pre>
+model_predictions_output_path &lt;- paste0(snapshots_path, &quot;/data_model_predictions.csv&quot;) </code></pre>
 </div>
 <div id="parse-data-frames" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Parse data frames</h1>
@@ -1590,7 +1596,7 @@ data</h2>
   relocate(trial_type, .after = subject_id) %&gt;% 
   rename(original_trial_index = trial_index)
 
-write.csv(data_freesort, file = freesort_output_path, row.names = F)</code></pre>
+#write.csv(data_freesort, file = freesort_output_path, row.names = F)</code></pre>
 </div>
 <div id="parse-causal-task-data" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Parse Causal Task
@@ -1739,10 +1745,12 @@ assign(combined_output_csv, data_combined)
 
 write.csv(data_combined, combined_output_path, row.names = F)</code></pre>
 </div>
-<div id="generate-theoretical-rdm-data" class="section level2" number="3.6">
-<h2><span class="header-section-number">3.6</span> Generate theoretical
-RDM data</h2>
-<pre class="r"><code>d_theories_categories &lt;- expand.grid(itemA = desired_order, itemB = desired_order) %&gt;% 
+</div>
+<div id="generate-theoretical-rdm-data" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Generate theoretical
+RDM data</h1>
+<p>These are the model predictions for the 4 hypotheses</p>
+<pre class="r"><code>d_theories_first3 &lt;- expand.grid(itemA = desired_order, itemB = desired_order) %&gt;% 
   filter(itemA != itemB) %&gt;%  # Remove self-pairs
   
   #theory 1: mind, body, action
@@ -1809,7 +1817,7 @@ RDM data</h2>
                                itemB == &quot;experience pain&quot;~ &quot;BS&quot;,
                                itemB == &quot;get sick&quot;~ &quot;BnS&quot;)) %&gt;% 
 
-      #theory 3: (2 groups) physical and non-physical events:
+      #theory 3: (2 groups) physical and non-physical/psychological events:
       mutate(PhysicalEthereal_itemA = case_when(itemA == &quot;hear something&quot; ~ &quot;ethereal&quot;,
                                itemA == &quot;see something&quot; ~ &quot;ethereal&quot;,
                                itemA == &quot;choose what to do&quot; ~ &quot;ethereal&quot;,
@@ -1846,15 +1854,14 @@ RDM data</h2>
          &quot;theor2_PerCog-OdActSpAct-BodyStimBodynoStim&quot; = ifelse(PerCogOdActSpActBstimBnstim_itemA == PerCogOdActSpActBstimBnstim_itemB, 0, 1),
          &quot;theor3_Physical-Ethereal&quot; = ifelse(PhysicalEthereal_itemA == PhysicalEthereal_itemB, 0, 1)) 
 
-write.csv(d_theories_categories, theories_output_path, row.names = F)</code></pre>
-</div>
-<div id="add-use-embeddings" class="section level2" number="3.7">
-<h2><span class="header-section-number">3.7</span> Add USE
+# write.csv(d_theories_first3, theories_output_path, row.names = F)</code></pre>
+<div id="add-use-embeddings" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Add USE
 embeddings</h2>
 <pre class="r"><code>#load USE embeddings
 embedding_df &lt;- readRDS(here(base_path, &quot;embeddings&quot;, &quot;item_embeddings.rds&quot;)) 
 
-d_theories &lt;- d_theories_categories %&gt;% 
+d_theories &lt;- d_theories_first3 %&gt;% 
   select(-c(&quot;MindBodyAction_itemA&quot;, &quot;MindBodyAction_itemB&quot;, 
             &quot;PerCogOdActSpActBstimBnstim_itemA&quot;,&quot;PerCogOdActSpActBstimBnstim_itemB&quot;, 
             &quot;PhysicalEthereal_itemA&quot;, &quot;PhysicalEthereal_itemB&quot;))
@@ -1879,11 +1886,11 @@ d_all_theories &lt;- d_theories_with_embeddings %&gt;%
   rename(&quot;theor4_cosine_similarity&quot; = cosine_similarity) %&gt;% 
   ungroup() 
 
-write.csv(d_all_theories, theories_all_output_path, row.names = F)</code></pre>
+write.csv(d_all_theories, model_predictions_output_path, row.names = F)</code></pre>
 </div>
 </div>
-<div id="plot-theoretical-rdms" class="section level1" number="4">
-<h1><span class="header-section-number">4</span> Plot theoretical
+<div id="plot-theoretical-rdms" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Plot theoretical
 RDMS</h1>
 <pre class="r"><code>plot_rdm_theory &lt;- function(data, column_name, desired_order, plot_title) {
 
@@ -1969,8 +1976,8 @@ for (i in seq_along(theories)) {
   dev.off() #close PDF device
 }</code></pre>
 </div>
-<div id="demographics" class="section level1" number="5">
-<h1><span class="header-section-number">5</span> Demographics</h1>
+<div id="demographics" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Demographics</h1>
 <pre class="r"><code>df_demographics &lt;- d %&gt;% 
   filter(trial_id == &quot;demographics_survey&quot;) %&gt;% 
   select(&quot;subject_id&quot;, &quot;trial_id&quot;,&quot;feedback&quot;, &quot;age&quot;, &quot;ethnicity&quot;, &quot;gender&quot;, &quot;race&quot;) 

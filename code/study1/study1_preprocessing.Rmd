@@ -10,18 +10,15 @@ date: "2024-12-10"
 author: anonymous
 ---
 
+This script does the following:  
+1. Takes raw data `study1_data_raw.csv`. The codebook for the raw data is available at `data/study1_data_raw_codebook`.  
+2. Parses it into a combined (i.e. freesort + causation) data frame and saves into csv `data_processed_step1.csv`. The codebook for this data frame is available at `/snapshots_study1_preprocessing_analysis/data_processed_step1_codebook`.  
+3. Generates model predictions (aka theoretical RDM data) and saves into csv `data_model_predictions.csv`.  
+4. Plots RDMs and saves them into `figures/theoretical-rdms`. 
 
-This script does the following:
-1. Takes original data
-2. Separates out freesort data and saves the csv (data_freesort)
-3. Separates out combined (i.e. freesort + causation) data and saves the csv (data_pilot_12_14_combined)
-4. Generates theoretical RDM data and saves the csv (d_theories_categories)
-5. Adds USE embeddings and saves the csv (d_all_theories) 
-6. Plots RDMs and saves them into /figures/
-
-Study description
-- Study ran on 12/13/24 on Connect CloudResearch, 50 participants
-- Subject selection criteria: 95% approval rate, minimum 10 previous submissions, and fluent in English
+Study description:    
+- Study 1 was ran on 12/13/24 on Connect CloudResearch, N = 50 participants.  
+- Subject selection criteria: 95% approval rate, minimum 10 previous submissions, and fluent in English. 
 
 ```{r}
 knitr::opts_chunk$set(echo = TRUE)
@@ -54,14 +51,12 @@ desired_order <- c("see something", "hear something", "choose what to do", #orde
                    "sit down", "jump up and down", "kick something", "take a walk", 
                    "get tired", "become hungry", "feel scared", "experience pain", "get sick")
 
-#paths
+#paths: data outputs
 rdm_figures_outputs_path <- paste0(base_path, "/figures/theoretical-rdms/")
-combined_output_csv <- "pilot_121424_combined"
+combined_output_csv <- "data_processed_step1"
 snapshots_path <- paste0(base_path, "/snapshots_study1_preprocessing_analysis")
-freesort_output_path <- paste0(snapshots_path, "/pilot_121424_freeesort.csv") #data for Sorting Task
 combined_output_path <- paste0(snapshots_path, "/", combined_output_csv, ".csv") 
-theories_output_path <- paste0(snapshots_path, "/pilot_121424_theories.csv")  
-theories_all_output_path <- paste0(snapshots_path, "/pilot_121424_theories_all.csv") 
+model_predictions_output_path <- paste0(snapshots_path, "/data_model_predictions.csv") 
 
 ```
 
@@ -85,7 +80,7 @@ data_freesort <- d %>%
   relocate(trial_type, .after = subject_id) %>% 
   rename(original_trial_index = trial_index)
 
-write.csv(data_freesort, file = freesort_output_path, row.names = F)
+#write.csv(data_freesort, file = freesort_output_path, row.names = F)
 ```
 
 ## Parse Causal Task data
@@ -241,10 +236,12 @@ write.csv(data_combined, combined_output_path, row.names = F)
 
 ```
 
-## Generate theoretical RDM data 
+# Generate theoretical RDM data 
+
+These are the model predictions for the 4 hypotheses
 
 ```{r}
-d_theories_categories <- expand.grid(itemA = desired_order, itemB = desired_order) %>% 
+d_theories_first3 <- expand.grid(itemA = desired_order, itemB = desired_order) %>% 
   filter(itemA != itemB) %>%  # Remove self-pairs
   
   #theory 1: mind, body, action
@@ -311,7 +308,7 @@ d_theories_categories <- expand.grid(itemA = desired_order, itemB = desired_orde
                                itemB == "experience pain"~ "BS",
                                itemB == "get sick"~ "BnS")) %>% 
 
-      #theory 3: (2 groups) physical and non-physical events:
+      #theory 3: (2 groups) physical and non-physical/psychological events:
       mutate(PhysicalEthereal_itemA = case_when(itemA == "hear something" ~ "ethereal",
                                itemA == "see something" ~ "ethereal",
                                itemA == "choose what to do" ~ "ethereal",
@@ -348,7 +345,7 @@ d_theories_categories <- expand.grid(itemA = desired_order, itemB = desired_orde
          "theor2_PerCog-OdActSpAct-BodyStimBodynoStim" = ifelse(PerCogOdActSpActBstimBnstim_itemA == PerCogOdActSpActBstimBnstim_itemB, 0, 1),
          "theor3_Physical-Ethereal" = ifelse(PhysicalEthereal_itemA == PhysicalEthereal_itemB, 0, 1)) 
 
-write.csv(d_theories_categories, theories_output_path, row.names = F)
+# write.csv(d_theories_first3, theories_output_path, row.names = F)
 
 ```
 
@@ -358,7 +355,7 @@ write.csv(d_theories_categories, theories_output_path, row.names = F)
 #load USE embeddings
 embedding_df <- readRDS(here(base_path, "embeddings", "item_embeddings.rds")) 
 
-d_theories <- d_theories_categories %>% 
+d_theories <- d_theories_first3 %>% 
   select(-c("MindBodyAction_itemA", "MindBodyAction_itemB", 
             "PerCogOdActSpActBstimBnstim_itemA","PerCogOdActSpActBstimBnstim_itemB", 
             "PhysicalEthereal_itemA", "PhysicalEthereal_itemB"))
@@ -383,7 +380,7 @@ d_all_theories <- d_theories_with_embeddings %>%
   rename("theor4_cosine_similarity" = cosine_similarity) %>% 
   ungroup() 
 
-write.csv(d_all_theories, theories_all_output_path, row.names = F)
+write.csv(d_all_theories, model_predictions_output_path, row.names = F)
 
 ```
 
@@ -484,6 +481,12 @@ summary(df_demographics$age)
 table(df_demographics$gender)
 table(df_demographics$ethnicity)
 table(df_demographics$race)
+
+```
+
+
+
+```{r}
 
 ```
 

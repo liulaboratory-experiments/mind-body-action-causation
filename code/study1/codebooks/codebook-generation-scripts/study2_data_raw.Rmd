@@ -1,0 +1,77 @@
+---
+title: "study1 preprocessing"
+output: 
+  html_document:
+      toc: true
+      toc_float: true
+      toc_depth: 3
+      number_sections: true
+date: "2024-12-10"
+author: anonymous
+---
+
+
+```{r}
+knit_by_pkgdown <- !is.null(knitr::opts_chunk$get("fig.retina"))
+knitr::opts_chunk$set(
+  warning = TRUE, # show warnings during codebook generation
+  message = TRUE, # show messages during codebook generation
+  error = TRUE, # do not interrupt codebook generation in case of errors,
+                # TRUE is usually better for debugging
+  echo = TRUE  # show R code
+)
+
+library(pacman)
+pacman::p_load(tidyverse, here, codebook)
+ggplot2::theme_set(ggplot2::theme_bw())
+sessionInfo()
+
+```
+
+# Read data
+
+```{r, echo = FALSE}
+base_path <- here("code", "study2")
+data_path <- paste0(base_path, "/data/study2_data_raw.csv")
+d <- read_csv(data_path) %>% 
+  select(-c(success, timeout, failed_images, failed_video, failed_audio)) %>% 
+  mutate(subject_id = as.factor(subject_id))
+
+```
+
+```{r, echo = FALSE}
+var_label(d) <- list(
+        subject_id =  "Subject ids for all 100 subjects", 
+        trial_type = "Type of jspsych trial. Trials in jspsych represent checkpoints in the experiment, such as the instructions page, the survey page etc ",
+        trial_index = "Each subject had about 20 jspsych trials. This does not refer to experimental trials, but overall trials including instructions",
+        plugin_version = "Plugin version that the subject had for the jspsych trials",
+        time_elapsed = "Time in milliseconds the subject spent on a given trial",
+        trial_id = "Researcher-assigned trial names. Trials highlighted were the consent and demorgraphics_survey",
+        rt = "Time it takes in milliseconds from when the page loads to when subject clicks on continue button",
+        stimulus = "Html-formatted string describing the stimulus presented to participant on trials that had a stimulus",
+        response = "responses on the respective trials, which included 0 or 1 for the main trial questions, and dictionaries of demographic values for the demographic survey items",
+        view_history ="A dictionary containing the index of the page and viewing time in milliseconds",
+        condition = "a character type describing the condition assignment. it includes the two experimental conditions, Similarity (which means Inference Condition) and Intervention, as well as the attention check trial labels",
+        itemB = "The target item in both the Intervention and Inference Tasks (and also the attention check question)",
+        causal_itemA = "The causal item choice in the Intervention and Inference Tasks, and in the attention check question",
+        similarity_itemA = "The similar item choice in the Intervention and Inference Tasks, and in the attention check question",
+        selected_choice = "A html formatted string showing the choice subjects selected in the experimental trial and attention check",
+        correct_response_attn = "The correct response for the attention check question",
+        feedback = "Feedback provided by subjects"
+)
+
+metadata(d)$name <- "Raw data for Study 2"
+metadata(d)$description <- "This is the raw dataset for study 1 that will be used as input for the study 2 script. It contains information like the target items which subjects saw, the causal and similar choice items and their repsonses in these trials."
+
+```
+
+
+```{r}
+codebook::codebook(d)
+```
+
+
+
+
+
+

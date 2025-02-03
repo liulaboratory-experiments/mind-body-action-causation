@@ -1,0 +1,93 @@
+---
+title: "study1 preprocessing"
+output: 
+  html_document:
+      toc: true
+      toc_float: true
+      toc_depth: 3
+      number_sections: true
+date: "2024-12-10"
+author: anonymous
+---
+
+
+```{r}
+knit_by_pkgdown <- !is.null(knitr::opts_chunk$get("fig.retina"))
+knitr::opts_chunk$set(
+  warning = TRUE, # show warnings during codebook generation
+  message = TRUE, # show messages during codebook generation
+  error = TRUE, # do not interrupt codebook generation in case of errors,
+                # TRUE is usually better for debugging
+  echo = TRUE  # show R code
+)
+
+library(pacman)
+pacman::p_load(tidyverse, labelled, here, codebook)
+ggplot2::theme_set(ggplot2::theme_bw())
+sessionInfo()
+
+```
+
+# Read data
+
+```{r, echo = FALSE}
+base_path <- here("code", "study1")
+data_path <- paste0(base_path, "/data/study1_data_raw.csv")
+d <- read_csv(data_path) %>% 
+  select(-c(success, timeout, failed_images, failed_video, failed_audio)) %>% 
+  mutate(subject_id = as.factor(subject_id))
+
+```
+
+```{r, echo = FALSE}
+var_label(d) <- list(
+        subject_id =  "Subject ids for all 50 subjects", 
+        trial_type = "Type of jspsych trial. Trials in jspsych represent checkpoints in the experiment, such as the instructions page, the survey page etc ",
+        trial_index = "Each subject did about 23 trials (Note: trial in the jspsych sense, since this raw data.",
+        plugin_version = "Plugin version that the subject had for the jspsych trials",
+        time_elapsed = "Time in milliseconds the subject spent on a given trial",
+        trial_id = "Researcher-assigned trial names. Trials highlighted were the consent, example_videos and demorgraphics_survey",
+        rt = "Time it takes in milliseconds from when the page loads to when subject clicks on continue button",
+        stimulus = "Html-formatted string describing the stimulus presented to participant on trials that had a stimulus",
+        response = "For the Causal Task, a dictionary containing subject responses for all 14 questions in each page",
+        view_history ="A dictionary containing the index of the page and viewing time in milliseconds",
+        init_locations = "For the Sorting Task, a dictionary describing initial x and y locations of each item and the item name",
+        moves = "For the Sorting Task, a dictionary describing where x and y locations of where items were moved to",
+        final_locations = "For the Sorting Task, a dictionary describing final x and y locations of each item and the item name",
+        "0" = "For the Sorting Task, a dictionary describing metadata about the first pair of items subjects saw",
+        "1" = "For the Sorting Task, a dictionary describing metadata about the second pair of items subjects saw",
+        "2" = "For the Sorting Task, a dictionary describing metadata about the third pair of items subjects saw",
+        "3" = "For the Sorting Task, a dictionary describing metadata about the fourth pair of items subjects saw",
+        "4" = "For the Sorting Task, a dictionary describing metadata about the fifth pair of items subjects saw",
+        "5" = "For the Sorting Task, a dictionary describing metadata about the sixth pair of items subjects saw",
+        "6" = "For the Sorting Task, a dictionary describing metadata about the seventh pair of items subjects saw",
+        "7" = "For the Sorting Task, a dictionary describing metadata about the eighth pair of items subjects saw",
+        "9" = "For the Sorting Task, a dictionary describing metadata about the ninth pair of items subjects saw",
+        "10" = "For the Sorting Task, a dictionary describing metadata about the tenth pair of items subjects saw",
+        "11" = "For the Sorting Task, a dictionary describing metadata about the eleventh pair of items subjects saw",
+        "12" = "For the Sorting Task, a dictionary describing metadata about the twelfth pair of items subjects saw",
+        "13" = "For the Sorting Task, a dictionary describing metadata about the thirtheenth pair of items subjects saw",
+        "14" = "For the Sorting Task, a dictionary describing metadata about the fourtheenth pair of items subjects saw",
+        question_order = "The order of questions seen by subjects",
+        "15" = "For the Sorting Task, a dictionary describing metadata about the fourtheenth pair of items subjects saw",
+        feedback = "feedback provided by subjects"
+)
+
+metadata(d)$name <- "Raw data for Study 1"
+metadata(d)$description <- "This is the raw dataset for study 1 that will be used as input for the pre-processing script. Since this data is not yet preprocessed, and many of the variables are directly created by jspsych, the variables may not be immediately interpretable or relevant."
+
+```
+
+
+```{r}
+codebook::codebook(d)
+```
+
+
+
+
+
+
+
+
+

@@ -10,10 +10,11 @@ date: "2024-12-15"
 author: anonymous
 ---
 
-What this script does:
-- proceeds from output of preprocessing script
-- plots Sorting and Causal Task rdms, gets correlations with models RDM, gets within subject correlations 
-
+What this script does:  
+- proceeds from the output of preprocessing script.   
+- takes as input `data_processed_step1.csv`, and `data_model_prediction.csv`
+- plots Sorting and Causal Task rdms, gets correlations between empirical and models RDM, gets within subject correlations.   
+- outputs `data_freesort_mins_causals.csv` for use in study 2 script for item selection.
 
 # Setup
 
@@ -49,37 +50,39 @@ sessionInfo()
 ## Set variables
 
 ```{r}
+# variables
 desired_order <- c("see something", "hear something", "choose what to do", 
                    "remember something", "think about something", "reach for something", 
                    "sit down", "jump up and down", "kick something", "take a walk", 
                    "get tired", "become hungry", "feel scared", "experience pain", "get sick")
-
 domain_order <- c("mind", "action", "bio")
-
 freesort_columns <- c("subject_id", "x", "y", "item")
 freesort_columns_with_trial_order <- c("subject_id", "x", "y", "item", "trial_type", "trial_type_order")
 causation_columns <- c("subject_id", "itemA", "itemB", "response")
 
 # paths
+## script inputs
 base_path <- here("code", "study1")
-data_original_path <- paste0(base_path, "/data-combined/pilot05_121324_n50_combined_17")
 snapshots_input_path <- paste0(base_path, "/snapshots_study1_preprocessing_analysis") 
-snapshots_output_path <- paste0(base_path, "/snapshots_study1_final_analysis")
-
-data_combined_path <- paste0(snapshots_input_path, "/pilot_121424_combined.csv")
-theories_all_input_path <- paste0(snapshots_input_path, "/pilot_121424_theories_all.csv") 
-theories_input_path <- paste0(snapshots_input_path, "/pilot_121424_theories.csv") 
-correlations_output_path <- paste0(snapshots_output_path, "/correlations.csv")
+data_input_path <- paste0(snapshots_input_path, "/data_processed_step1.csv")
+model_predictions_input_path <- paste0(snapshots_input_path, "/data_model_predictions.csv") 
 rdms_input_path <- paste0(base_path, "/figures/theoretical-rdms")
-rdms_outputs_path <- paste0(base_path, "/figures")
 
+## script outputs
+snapshots_output_path <- paste0(base_path, "/snapshots_study1_final_analysis")
+rdms_outputs_path <- paste0(base_path, "/figures")
+freesort_minus_causal_distances_output_path <- paste0(snapshots_output_path, "/freesort_minus_causals.csv")
+
+## saved dataframes (not to be used in subsequent scripts, but saving for efficiency)
+data_processed_output_path <- paste0(snapshots_output_path, "/data_processed_step2.csv") #this dataframe is not used in a subsequent script. It is just being saved for efficiency
+correlations_output_path <- paste0(snapshots_output_path, "/correlations.csv") #this isn't used in this script
 
 ```
 
 ## Read data
 
 ```{r}
-d <- read_csv(data_combined_path)
+d <- read_csv(data_input_path)
 
 
 ```
@@ -178,7 +181,8 @@ df_combined <- df_freesort %>%
 
 paged_table(df_combined)
 
-write.csv(df_combined, paste0(snapshots_output_path, "/study1_processed.csv"), row.names = F)
+write.csv(df_combined, data_processed_output_path, row.names = F)
+
 ```
 
 # Freesort RDMs
@@ -741,10 +745,10 @@ calculate_causal_noise_ceiling <- function(data, subjects, desired_order, metric
 
 ```{r}
 #create correlations data frame
-d_all_theories <- read_csv(theories_all_input_path)
+d_model_predictions <- read_csv(model_predictions_input_path)
 
 d_freesort_correlations <- df_combined %>%
-  left_join(d_all_theories, by = c("itemA", "itemB")) %>%
+  left_join(d_model_predictions, by = c("itemA", "itemB")) %>%
   group_by(subject_id) %>%
   mutate(
     `1_Mind-Body-Action` = compute_rdm_correlation(pick(everything()), freesort_distance, `theor1_Mind-Body-Action`, desired_order),
@@ -765,7 +769,7 @@ noise_ceiling_sorting
 
 ```{r}
 d_causal_correlations <-  df_combined %>%
-  left_join(d_all_theories, by = c("itemA", "itemB")) %>% 
+  left_join(d_model_predictions, by = c("itemA", "itemB")) %>% 
   group_by(subject_id) %>%
   mutate(
     `1_Mind-Body-Action` = compute_rdm_correlation(pick(everything()), causal_distance, `theor1_Mind-Body-Action`, desired_order),
@@ -904,7 +908,9 @@ print(t_test_results)
 
 ```
 
-# Item-selection for study 2
+# Freesort minus causal distances for Study 2
+
+Here we are geenerating freesort minus causal distances to itemB (i.e. the target item). These will be used to select items for study 2 in the study 2 script.
 
 ```{r}
 #get mean distances by item pairs
@@ -917,15 +923,15 @@ df_pair_means <- df_combined %>%
   ungroup() %>% 
   separate(item_pairs, c("itemA", "itemB"), sep = "_")
 
-#get itemB pair means
-df_itemB_means <- df_pair_means %>% 
-  group_by(itemB) %>%
-  mutate(mean_itemB_causal_distance = mean(mean_causal_distance, na.rm = TRUE),
-         mean_itemB_freesort_distance = mean(mean_freesort_distance, na.rm = TRUE)) %>%
-  ungroup() 
+#get itemB pair means 
+# df_itemB_means <- df_pair_means %>% 
+#   group_by(itemB) %>%
+#   mutate(mean_itemB_causal_distance = mean(mean_causal_distance, na.rm = TRUE),
+#          mean_itemB_freesort_distance = mean(mean_freesort_distance, na.rm = TRUE)) %>%
+#   ungroup() 
 
 #add domain labels
-df_itemB_means_domain <- df_itemB_means %>% 
+df_item_pair_means_domain <- df_pair_means %>%
   left_join(df_combined %>% 
               select(itemA, itemB, domain_itemA, domain_itemB) %>% 
               distinct(),
@@ -934,20 +940,20 @@ df_itemB_means_domain <- df_itemB_means %>%
   relocate(domain_itemB, .after = "domain_itemA") %>% 
   mutate(itemB = factor(itemB, levels = desired_order))
 
-df_itemB_means_domain_long <- df_itemB_means_domain %>% 
+df_item_pair_means_domain_long <- df_item_pair_means_domain %>% 
   pivot_longer(
     cols = c("mean_causal_distance", "mean_freesort_distance"),
     names_to = "mean_type",
     values_to = "values"
-  ) %>% 
-  select(-c(mean_itemB_causal_distance, mean_itemB_freesort_distance))
+  ) 
 
-df_distance_differences <- df_itemB_means_domain_long %>% 
+df_item_pair_means_freesort_minus_causal <- df_item_pair_means_domain_long %>% 
   pivot_wider(names_from = "mean_type",
               values_from = "values") %>% 
   mutate(freesort_minus_causal = mean_freesort_distance - mean_causal_distance)
 
-write.csv(df_distance_differences, paste0(snapshots_output_path, "/relative_distances.csv"), row.names = F)
+write.csv(df_item_pair_means_freesort_minus_causal, freesort_minus_causal_distances_output_path, row.names = F)
+
 ```
 
 # Order effects
