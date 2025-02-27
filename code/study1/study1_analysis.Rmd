@@ -147,7 +147,6 @@ df_freesort <- d %>%
   summarize(pairs = list(expand.grid(itemA = item_freesort, itemB = item_freesort, stringsAsFactors = FALSE)), .groups = "drop") %>%
   unnest(pairs) %>%
   filter(itemA != itemB) %>%
-  
   # Join Free Sort coordinates
   left_join(d %>% filter(trial_type == "free_sort") %>%
               select(subject_id, itemA = item, x, y),
@@ -159,6 +158,7 @@ df_freesort <- d %>%
             by = c("subject_id", "itemB")) %>%
   rename(x_itemB = x, y_itemB = y) %>%
   
+  group_by(subject_id) %>% 
   # Compute Euclidean Distance and Normalize
   mutate(
     euclidean_distance = sqrt((x_itemA - x_itemB)^2 + (y_itemA - y_itemB)^2),

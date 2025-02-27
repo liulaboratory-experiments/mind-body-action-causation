@@ -34,6 +34,7 @@ pacman::p_load(tidyverse,
                effects, 
                gt,
                webshot2,
+               ragg,
                knitr,
                performance)
 sessionInfo()
@@ -284,6 +285,9 @@ df_table <- pairs_table %>%
   )
 
 gtsave(df_table, "figures/pairs-table-words.png")
+
+
+
 
 ```
 
