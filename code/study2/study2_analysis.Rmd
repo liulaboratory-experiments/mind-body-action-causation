@@ -1,21 +1,26 @@
 ---
 title: "study 2"
-output: 
-  html_document:
-      toc: true
-      toc_float: true
-      toc_depth: 3
-      number_sections: true
+output:
+  bookdown::html_document2:
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    theme: cosmo
+    highlight: tango
 date: "2025-1-10"
-author: anonymous
+author: Joseph Outa
 ---
 
-This is the analysis script for study 2 of the project "Adults hold a causal explanatory framework that connects understanding of other people’s minds, actions and bodies" by (authors redacted).
+Background:
+This is the analysis script for Study 2 of the project "Adults hold a causal explanatory framework that connects understanding of other people’s minds, actions and bodies" by Joseph Outa and Shari Liu. 
 
-Study 2 had N = 100, with random assignment to two conditions: Intervention and Trait Inference, with 15 trials per condition.
+Study 2 had N = 100, with random assignment to two between-subjects conditions: Intervention and Trait Inference, with 15 trials per condition. 
 
-The question: are subjects in the Intervention condition more likely to select the causal item, and subjects in the Inference condition more likely to select the similar item.
+Study conducted online with adults on Cloud Research Connect. Study demo: https://liulaboratory-experiments.github.io/mbc/study2
 
+The question: Do subjects flexibly use their latent-cause and direct-cause representations depending on the task? Are subjects in the Intervention condition more likely to select the causal item (based on causal ratings of study 1), and are subjects in the Inference condition more likely to select the similar item (based on results of sorting task of study 1)?
+
+Script description:
 This script takes as input `study2_data_raw.csv` and `data_freesort_minus_causals.csv`, and plots Supplementary Table 1 in the SI materials, Figure 2 from the main manuscript, and runs statistical models to predict variability in responses from causal and freesort distances.
 
 # Setup
@@ -81,7 +86,6 @@ table(df_demographics$ethnicity)
 table(df_demographics$race)
 
 ```
-
 
 ## Wrangle data frame
 
@@ -286,9 +290,6 @@ df_table <- pairs_table %>%
 
 gtsave(df_table, "figures/pairs-table-words.png")
 
-
-
-
 ```
 
 
@@ -400,6 +401,82 @@ ggsave(
 )
 
 ```
+
+## Including item triads in plot
+
+```{r, fig.width = 12, fig.height = 12}
+dat_labels <- dat_summarized_by_item %>% 
+  distinct(itemB, causal_itemA, similarity_itemA) %>% 
+  # mutate(facet_label = paste0(
+  #   itemB, "\n",
+  #   "Causal: ", causal_itemA, "\n",
+  #   "Similar: ", similarity_itemA
+  # )) 
+# mutate(facet_label = paste0(
+#   itemB, "\n",
+#   "\U25A0 ", causal_itemA, "\n",  # black square
+#   "\U25A1 ", similarity_itemA    # white square (or use light gray block)
+# )) 
+# mutate(facet_label = paste0(
+#   itemB, "\n",
+#   "■ ", causal_itemA, "\n",  # black square
+#   "□ ", similarity_itemA    # white square (or use light gray block)
+# ))
+# mutate(facet_label = paste0(
+#   itemB, "\n",
+#   "⬛ ", causal_itemA, "\n",  # black square
+#   "⬜ ", similarity_itemA    # white square (or use light gray block)
+# ))
+mutate(facet_label = paste0(
+  itemB, "\n",
+  "", causal_itemA, "\n",  # black square
+  "", similarity_itemA    # white square (or use light gray block)
+))
+
+
+#sort by itemB and extract the ordered facet labels
+ordered_facet_labels <- dat_labels %>%
+  arrange(itemB) %>%
+  pull(facet_label)
+
+#set facet_label as a factor with that order
+dat_labels <- dat_labels %>%
+  mutate(facet_label = factor(facet_label, levels = ordered_facet_labels))
+
+
+dat_summarized_by_item_levels <- dat_summarized_by_item %>%
+  left_join(dat_labels %>% select(itemB, facet_label), by = "itemB") %>% 
+  mutate(facet_label = factor(facet_label, levels = ordered_facet_labels))
+
+p_alt2 <- dat_summarized_by_item_levels %>% 
+  ggplot(aes(x =condition, y = mean_proportion, fill = response)) +
+  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", colour = "black") +
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  geom_errorbar(data = filter(dat_summarized_by_item_levels, response == "causal"), aes(ymax = mean_proportion + se,
+                                                                         ymin = mean_proportion - se),
+                stat = "identity", position = "identity", width = 0.3) +
+  scale_fill_manual(values = c("grey80", "#000000")) +
+  theme_cowplot() +
+  theme(axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 15),
+        legend.position = "none",
+        strip.text = element_text(size = 15)) +
+  labs(y = "proportion") +
+  facet_wrap(~facet_label, nrow = 3) 
+
+p_alt2
+
+ggsave(
+  filename = "figures/p_study2_item-level_stacked_v2.pdf",
+  plot = p_alt2,          
+  device = "pdf",           
+  width = 12,               
+  height = 8,             
+  units = "in")
+
+```
+
 
 # Modelling
 
@@ -578,9 +655,7 @@ base_plot <- ggplot(combined_effects, aes(x = PredictorValue, y = fit, color = P
 
 base_plot
 
-
 ```
-
 
 ## Effect of distances: intervention condition
 
@@ -650,9 +725,15 @@ base_plot <- ggplot(combined_effects, aes(x = PredictorValue, y = fit, color = P
 base_plot
 
 ```
-```{r}
 
-```
+
+
+
+
+
+
+
+
 
 
 
