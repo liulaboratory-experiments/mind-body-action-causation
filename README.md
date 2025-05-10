@@ -1,6 +1,6 @@
 # Adults hold two parallel causal frameworks for reasoning about people’s minds, actions and bodies
 
-This repository contains data and scripts for the project "Adults hold two parallel causal frameworks for reasoning about people’s minds, actions and bodies" by Joseph Outa and Shari Liu. If you have any questions about this repository, please contact Joseph Outa at jouta1 [at] jhu [dot] edu.
+This repository contains data and scripts for the CogSci 2025 project "Adults hold two parallel causal frameworks for reasoning about people’s minds, actions and bodies" by Joseph Outa and Shari Liu. If you have any questions about this repository, please contact Joseph Outa at jouta1 [at] jhu [dot] edu.
 
 This is the repository structure and breakdown: 
 
