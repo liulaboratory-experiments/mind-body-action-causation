@@ -42,7 +42,7 @@ This folder contains the experimental stimuli. Both experiments was implemented 
 ## Supplementary Information
 In the home directory is a pdf document containing Supplementary Information for the cogsci paper. 
 
-## Bonus: The analysis pipeline
+## The analysis pipeline
 
 The following is a flowchart depicting the analysis pipeline:
 
