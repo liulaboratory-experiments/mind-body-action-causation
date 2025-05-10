@@ -1,8 +1,6 @@
 # Adults hold a causal explanatory framework that connects understanding of other people’s minds, actions and bodies
 
-Heads-up: This repository has been anonymized for peer review.
-
-This repository contains data and scripts for the project "Adults hold a causal explanatory framework that connects understanding of other people’s minds, actions and bodies" by (redacted). If you have any questions about this repository, please contact (redacted).
+This repository contains data and scripts for the project "Adults hold a causal explanatory framework that connects understanding of other people’s minds, actions and bodies" by Joseph Outa and Shari Liu. If you have any questions about this repository, please contact Joseph Outa at jouta1 [at] jhu [dot] edu.
 
 This is the repository structure and breakdown: 
 
