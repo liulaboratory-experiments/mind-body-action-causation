@@ -1,13 +1,14 @@
 ---
-title: "study1 preprocessing"
-output: 
-  html_document:
-      toc: true
-      toc_float: true
-      toc_depth: 3
-      number_sections: true
-date: "2024-12-10"
-author: anonymous
+title: "study2 data raw"
+output:
+  bookdown::html_document2:
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    theme: cosmo
+    highlight: tango
+date: "2025-5-11"
+author: Joseph Outa
 ---
 
 
