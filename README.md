@@ -19,15 +19,15 @@ This is the repository structure and breakdown:
 │   └── study2
 │       ├── data
 │       └── figures
-└── docs
-    ├── images
-    │   └── items-circles
-    ├── jspsych
-    │   ├── dist
-    │   ├── examples
-    │   └── plugin-survey-slider
-    └── video
-
+├── docs
+│   ├── images
+│   │   └── items-circles
+│   ├── jspsych
+│   │   ├── dist
+│   │   ├── examples
+│   │   └── plugin-survey-slider
+│   └── video
+└── manuscript
 ```
 ## Folder contents
 
