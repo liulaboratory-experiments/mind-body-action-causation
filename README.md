@@ -54,6 +54,10 @@ Across the two studies, there are 3 analysis scripts, and 5 relevant data csvs. 
 
 Thank you for accessing these materials!
 
+### Manuscript
+
+Contains the manuscript submitted to the 2025 Cognitive Science Society Conference.
+
 
 
 
