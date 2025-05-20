@@ -39,8 +39,13 @@ Feel free to download the repository (button on top right) and look through the 
 ### Docs
 This folder contains the experimental stimuli. Both experiments was implemented using jsPsych, and are available at the html files `docs/study1.html`, `docs/study2_inference.html` and `docs/study2_intervention.html`. The `/images`, `video`, and `/jspsych` folders contain supporting materials for the experiments. 
 
+### Manuscript
+
+Contains the manuscript submitted to the 2025 Cognitive Science Society Conference.
+
 ## Supplementary Information
 In the home directory is a pdf document containing Supplementary Information for the cogsci paper. 
+
 
 ## The analysis pipeline
 
@@ -54,9 +59,6 @@ Across the two studies, there are 3 analysis scripts, and 5 relevant data csvs. 
 
 Thank you for accessing these materials!
 
-### Manuscript
-
-Contains the manuscript submitted to the 2025 Cognitive Science Society Conference.
 
 
 
